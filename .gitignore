@@ -1,0 +1,6 @@
+dist/
+scraps/
+screenshots/
+.thumbnail
+.DS_Store
+Thumbs.db
