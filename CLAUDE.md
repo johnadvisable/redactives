@@ -1,6 +1,6 @@
 # Redactives — One Page Site
 
-Κύριο αρχείο: `Redactives.dc.html` (Design Component). Standalone για share: `Redactives-share.html` (re-bundle με super_inline_html μετά από αλλαγές).
+Κύριο αρχείο: `index.html` (πρώην `Redactives.dc.html` — μετονομάστηκε σε index.html για να γίνεται serve ως root page). Standalone για share: `Redactives-share.html` (re-bundle με super_inline_html μετά από αλλαγές).
 
 ## Brand
 - **Γλώσσα:** Ελληνικά (τα ονόματα actives/grades/labels μένουν Αγγλικά).
