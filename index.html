@@ -60,9 +60,8 @@
 </script>
 <meta name="ext-resource-dependency" content="logo-red.svg?v=200" data-resource-id="logoRed" />
 <meta name="ext-resource-dependency" content="logo-white.svg?v=200" data-resource-id="logoWhite" />
-<meta name="ext-resource-dependency" content="uploads/new redactives.mp4" data-resource-id="videoDesktop" />
-<meta name="ext-resource-dependency" content="uploads/4-5 ratio.mp4" data-resource-id="videoMobile" />
 <script src="./support.js" defer></script>
+<script src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js" defer integrity="sha384-uAXVeSBUWjEUyzjgbG9Jc9TZXaerZ9aPZdEK22FFDtYkpDdeLiPOWdx3DTEKyhRP" crossorigin="anonymous"></script>
 </head>
 <body>
 <x-dc>
@@ -119,8 +118,6 @@ a:hover .rdx-arrow,button:hover .rdx-arrow{transform:translateX(5px);}
   100%{transform:scaleX(1);}
 }
 @media (max-width:760px){
-  #hero-video{height:auto !important;}
-  #hero-video video{position:relative !important;height:auto !important;object-fit:contain !important;}
   .rdx-2col{grid-template-columns:1fr !important;gap:clamp(28px,7vw,44px) !important;}
   .rdx-footer-grid{grid-template-columns:1fr 1fr !important;gap:32px !important;}
   .rdx-compare{gap:12px !important;}
@@ -182,9 +179,11 @@ a:hover .rdx-arrow,button:hover .rdx-arrow{transform:translateX(5px);}
   </div>
 </sc-if>
 
-<section id="hero-video" style="position:relative;width:100%;height:clamp(420px,82vh,860px);overflow:hidden;background:#010101;">
+<section id="hero-video" style="position:relative;width:100%;height:calc(100vw * 0.5625);overflow:hidden;background:#010101;">
   <div ref="{{ sentinel }}" style="position:absolute;top:70px;left:0;width:1px;height:1px;pointer-events:none;"></div>
-  <video ref="{{ heroVideo }}" src="uploads/new redactives.mp4" data-src-desktop="uploads/new redactives.mp4" data-src-mobile="uploads/4-5 ratio.mp4" autoplay="" muted="" playsinline="" preload="auto" poster="logo.svg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#010101;"></video>
+  <div style="position:absolute;inset:0;overflow:hidden;">
+    <iframe ref="{{ heroIframe }}" src="https://player.mediadelivery.net/embed/778103/a8bfa02e-710a-4dda-9d0a-8d0620ce4f0a?autoplay=true&muted=true&preload=true&responsive=true" loading="lazy" style="border:0;position:absolute;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen;" allowfullscreen="true"></iframe>
+  </div>
   <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,1,1,0.34) 0%,rgba(1,1,1,0) 30%,rgba(1,1,1,0) 55%,rgba(1,1,1,0.62) 100%);pointer-events:none;"></div>
   <sc-if value="{{ videoEnded }}" hint-placeholder-val="{{ false }}">
     <button onClick="{{ replayVideo }}" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:10px;background:rgba(1,1,1,0.4);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.6);color:#fff;padding:13px 22px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.18em;cursor:pointer;z-index:4;">
@@ -464,8 +463,8 @@ a:hover .rdx-arrow,button:hover .rdx-arrow{transform:translateX(5px);}
   </div>
 </section>
 
-<section id="manifesto-video" style="width:100%;height:clamp(340px,72vh,760px);overflow:hidden;background:#010101;">
-  <video ref="{{ loopVideo }}" src="uploads/woman video-e1376a63.mp4" autoplay="" muted="" loop="" playsinline="" preload="none" style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+<section id="manifesto-video" style="position:relative;width:100%;height:calc(100vw * 0.5625);overflow:hidden;background:#010101;">
+  <iframe src="https://player.mediadelivery.net/embed/778103/980450ac-1faa-4b04-8af4-15ac06a5173e?autoplay=true&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style="border:0;position:absolute;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;fullscreen;" allowfullscreen="true"></iframe>
 </section>
 
 <section id="manifesto" style="position:relative;scroll-margin-top:0;background:#010101;color:#fff;padding:clamp(80px,13vh,160px) clamp(20px,5vw,56px);">
@@ -599,33 +598,20 @@ class Component extends DCLogic {
 
   get grade() { return this.state.activeGrade ?? (this.props.gradeDefault ?? 1); }
 
-  heroVideo = React.createRef();
-  loopVideo = React.createRef();
+  heroIframe = React.createRef();
   header = React.createRef();
   nav = React.createRef();
   logoImg = React.createRef();
   sentinel = React.createRef();
 
   componentDidMount() {
-    this.setupRedactions(); this.playHero(); this.setupHeader(); this.setupCounts(); this.setupCensor(); this.setupLoop();
+    this.setupRedactions(); this.setupHeader(); this.setupCounts(); this.setupCensor(); this.setupHeroPlayer();
     this._onPop = () => {
       if (location.hash) this.openBySlug(location.hash.slice(1));
       else if (this.state.drawerOpen) { document.body.style.overflow = ''; this.setState({ drawerOpen: false }); }
     };
     window.addEventListener('popstate', this._onPop);
     if (location.hash) this.openBySlug(location.hash.slice(1));
-  }
-  setupLoop() {
-    const v = this.loopVideo && this.loopVideo.current;
-    if (!v) return;
-    v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true;
-    const go = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
-    v.addEventListener('ended', () => { v.currentTime = 0; go(); });
-    const io = new IntersectionObserver((ents) => {
-      ents.forEach(e => { if (e.isIntersecting) go(); });
-    }, { threshold: 0.15 });
-    io.observe(v);
-    if (v.readyState >= 2) go(); else v.addEventListener('loadeddata', go, { once: true });
   }
   componentDidUpdate() { this.setupRedactions(); this.setupCounts(); this.setupCensor(); }
   componentWillUnmount() { if (this._io) this._io.disconnect(); if (this._countIo) this._countIo.disconnect(); if (this._censorIo) this._censorIo.disconnect(); window.removeEventListener('popstate', this._onPop); }
@@ -688,27 +674,26 @@ class Component extends DCLogic {
     this._io.observe(target);
   }
 
-  playHero() {
-    const v = this.heroVideo.current;
-    if (!v) return;
-    const R = window.__resources || {};
-    const isMobile = window.matchMedia('(max-width:760px)').matches;
-    const key = isMobile ? 'videoMobile' : 'videoDesktop';
-    const want = R[key] || (isMobile ? v.dataset.srcMobile : v.dataset.srcDesktop);
-    if (want && v.dataset.curKey !== key) { v.src = want; v.dataset.curKey = key; v.load(); }
-    v.muted = true;
-    const go = () => { v.play().catch(() => {}); };
-    go();
-    if (v.readyState < 3) v.addEventListener('canplay', go, { once: true });
-    v.addEventListener('ended', () => this.setState({ videoEnded: true }));
+  setupHeroPlayer(attempt = 0) {
+    const iframe = this.heroIframe.current;
+    if (!iframe) return;
+    if (!window.playerjs) {
+      if (attempt > 20) return;
+      setTimeout(() => this.setupHeroPlayer(attempt + 1), 150);
+      return;
+    }
+    const player = new window.playerjs.Player(iframe);
+    player.on('ready', () => {
+      this._heroPlayer = player;
+      player.on('ended', () => this.setState({ videoEnded: true }));
+    });
   }
 
   replayVideo() {
-    const v = this.heroVideo.current;
-    if (!v) return;
+    if (!this._heroPlayer) return;
     this.setState({ videoEnded: false });
-    v.currentTime = 0;
-    v.play().catch(() => {});
+    this._heroPlayer.setCurrentTime(0);
+    this._heroPlayer.play();
   }
 
   setupRedactions() {
@@ -767,8 +752,7 @@ class Component extends DCLogic {
     return {
       grades,
       tabs, products,
-      heroVideo: this.heroVideo,
-      loopVideo: this.loopVideo,
+      heroIframe: this.heroIframe,
       videoEnded: this.state.videoEnded,
       replayVideo: () => this.replayVideo(),
       header: this.header,

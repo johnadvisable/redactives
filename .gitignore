@@ -1,6 +1,7 @@
 dist/
 scraps/
 screenshots/
+.playwright-mcp/
 .thumbnail
 .DS_Store
 Thumbs.db
