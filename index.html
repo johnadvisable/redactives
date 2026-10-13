@@ -526,7 +526,7 @@ a:hover .rdx-arrow,button:hover .rdx-arrow{transform:translateX(5px);}
       </div>
       <div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.16em;color:#999A98;margin-bottom:18px;">PRODUCTS</div>
-        <div style="display:flex;flex-direction:column;gap:12px;font-size:15px;"><a href="#products" style="color:rgba(255,255,255,0.82);">Serums</a><a href="#products" style="color:rgba(255,255,255,0.82);">Creams</a><a href="#grade" style="color:rgba(255,255,255,0.82);">Grade System</a></div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:15px;"><a href="#products" onClick="{{ selectSerums }}" style="color:rgba(255,255,255,0.82);">Serums</a><a href="#products" onClick="{{ selectCreams }}" style="color:rgba(255,255,255,0.82);">Creams</a><a href="#grade" style="color:rgba(255,255,255,0.82);">Grade System</a></div>
       </div>
       <div>
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.16em;color:#999A98;margin-bottom:18px;">COMPANY</div>
@@ -595,10 +595,6 @@ class Component extends DCLogic {
     this.setState({ drawerProduct: this.enrichProduct(p), drawerOpen: true, drawerImg: 0 });
   }
 
-  selectCategory(cat) {
-    const first = this.allProducts.find(p => p.cat === cat);
-    this.setState({ category: cat, selectedCode: first ? first.code : this.state.selectedCode });
-  }
 
   get grade() { return this.state.activeGrade ?? (this.props.gradeDefault ?? 1); }
 
@@ -756,6 +752,8 @@ class Component extends DCLogic {
     return {
       grades,
       tabs, products,
+      selectSerums: () => this.setState({ category: 'serum' }),
+      selectCreams: () => this.setState({ category: 'cream' }),
       heroIframe: this.heroIframe,
       videoEnded: this.state.videoEnded,
       replayVideo: () => this.replayVideo(),
