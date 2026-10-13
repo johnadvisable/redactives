@@ -1,0 +1,14 @@
+# QR-code packaging URLs (from REDACTIVES MASTER FILE) redirect into the
+# matching product drawer on the homepage. Apache only — if hosting moves
+# off Apache, port these to that platform's native redirect config instead.
+
+Redirect 301 /qrcode/1/ https://redactives.com/#nh-biomimetic-face-serum
+Redirect 301 /qrcode/2/ https://redactives.com/#hc-biomimetic-face-serum
+Redirect 301 /qrcode/3/ https://redactives.com/#vb-biomimetic-face-serum
+Redirect 301 /qrcode/4/ https://redactives.com/#cp-biomimetic-face-serum
+Redirect 301 /qrcode/5/ https://redactives.com/#ra-biomimetic-face-serum
+Redirect 301 /qrcode/6/ https://redactives.com/#nh-biomimetic-face-cream
+Redirect 301 /qrcode/7/ https://redactives.com/#hc-biomimetic-face-cream
+Redirect 301 /qrcode/8/ https://redactives.com/#vb-biomimetic-face-cream
+Redirect 301 /qrcode/9/ https://redactives.com/#cp-biomimetic-face-cream
+Redirect 301 /qrcode/10/ https://redactives.com/#ra-biomimetic-face-cream
